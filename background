@@ -1,0 +1,40 @@
+const canvas = document.querySelector("#background");
+const ctx = canvas.getContext("2d");
+
+const img = new Image();
+img.src = "snow-field1.jpg";
+img.onload = function () {
+  ctx.drawImage(img, 50, 960, 800, 100, 300, 300, 390, 300);
+};
+
+ctx.beginPath();
+ctx.moveTo(350, 0); 
+ctx.lineTo(350, 300); 
+ctx.strokeStyle = "red";
+ctx.lineWidth = 5;
+ctx.stroke(); 
+ctx.closePath(); 
+
+ctx.beginPath();
+ctx.moveTo(420, 0);
+ctx.lineTo(420, 300);
+ctx.strokeStyle = "red";
+ctx.lineWidth = 5;
+ctx.stroke();
+ctx.closePath();
+
+ctx.beginPath();
+ctx.moveTo(570, 0);
+ctx.lineTo(570, 300);
+ctx.strokeStyle = "yellow";
+ctx.lineWidth = 5;
+ctx.stroke();
+ctx.closePath();
+
+ctx.beginPath();
+ctx.moveTo(640, 0);
+ctx.lineTo(640, 300);
+ctx.strokeStyle = "yellow";
+ctx.lineWidth = 5;
+ctx.stroke();
+ctx.closePath();
