@@ -1,0 +1,64 @@
+#background {
+  display: block;
+  position: absolute;
+  background-image: url("sky-background.jpg");
+  border: none;
+  top: 20%;
+  z-index: -1;
+}
+
+#message {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  position: relative;
+  top: 370px;
+  right: 45px;
+  font-size: 40px;
+}
+
+.btn {
+  margin-top: 10px;
+}
+
+#playBtn {
+  background: url("play-btn.png");
+  background-position: center;
+  background-size: cover;
+  border: none;
+  width: 150px; 
+  height: 70px;
+  clip-path: circle(58%);
+  margin-left: 1050px;
+}
+
+#exitBtn {
+  background: url("exit-btn.png");
+  background-position: center;
+  background-size: cover;
+  border: none;
+  width: 150px; 
+  height: 60px;
+  clip-path: circle(58%);
+  margin-left: 1050px;
+}
+
+#restartBtn {
+  background: url("restart-btn.png");
+  background-position: center;
+  background-size: cover;
+  border: none;
+  width: 150px; 
+  height: 60px;
+  clip-path: circle(65%);
+  margin-left: 1050px;
+  margin-top: 15px;
+}
+
+h1 {
+  text-align: center;
+  font-family: Agbalumo, sans-serif;
+  font-size: 70px;
+  margin: 0 auto;
+  color: rgb(107, 79, 234);
+}
