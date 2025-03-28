@@ -1,7 +1,7 @@
 const canvas = document.querySelector("#background");
 const ctx = canvas.getContext("2d");
 
-const img = new image();
+const img = new Image();
 img.src = "snow-field1.jpg";
 img.onload = function () {
   ctx.drawImage(img, 50, 960, 800, 100, 300, 300, 390, 300);
