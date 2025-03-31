@@ -62,3 +62,26 @@ h1 {
   margin: 0 auto;
   color: rgb(107, 79, 234);
 }
+
+//===========================================================================================
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: grey;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.game-container {
+  position: relative;
+  width: 352px;
+  height: 198px;
+  margin: 0 auto;
+  margin-top: 20px;
+  outline: 1px solid white;
+  transform: scale(2) translateY(50%);
+}
+
