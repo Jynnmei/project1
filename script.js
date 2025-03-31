@@ -58,11 +58,9 @@ window.addEventListener("load", function () {
       this.game = game;
       window.addEventListener("keydown", (e) => {
         this.game.lastKey = "P" + e.key;
-        // console.log(this.game.lastKey);
       });
       window.addEventListener("keyup", (e) => {
         this.game.lastKey = "R" + e.key;
-        // console.log(this.game.lastKey);
       });
     }
   }
@@ -102,16 +100,15 @@ window.addEventListener("load", function () {
       this.x += this.speedX;
       this.y += this.speedY;
 
-      //   horizontal
-        if (this.x < 0) {
-          this.x = 0;
-        } else if (this.x > this.game.width - this.width) {
-          this.x = this.game.width - this.width;
-        }
-      //   vertical
-      if (this.y < this.game.topMargin) {
-        this.y = this.game.topMargin;
-      }
+      const minX = this.game.leftMargin; 
+      const maxX = this.game.width - this.width - this.game.rightMargin; 
+      const minY = this.game.topMargin; 
+      const maxY = this.game.height - this.height; 
+
+      if (this.x < minX) this.x = minX;
+      if (this.x > maxX) this.x = maxX;
+      if (this.y < minY) this.y = minY;
+      if (this.y > maxY) this.y = maxY;
     }
   }
 
@@ -121,19 +118,21 @@ window.addEventListener("load", function () {
     constructor(width, height) {
       this.width = width;
       this.height = height;
-      this.topMargin = 150;
+      this.topMargin = 100;
+      this.leftMargin = 100;
+      this.rightMargin = 100;
       this.lastKey = undefined;
       this.input = new InputHandler(this);
       this.npc1 = new npc1(this);
       this.backgroundImg1 = new Image();
       this.backgroundImg1.onload = () => {
-        this.render(ctx); // 图片加载完成后再渲染
+        this.render(ctx); 
       };
       this.backgroundImg1.src = "/image/sky-background.jpg";
 
       this.backgroundImg2 = new Image();
       this.backgroundImg2.onload = () => {
-        this.render(ctx); // 图片加载完成后再渲染
+        this.render(ctx); 
       };
       this.backgroundImg2.src = "/image/snow-field.jpg";
     }
@@ -141,14 +140,14 @@ window.addEventListener("load", function () {
       context.drawImage(this.backgroundImg1, 0, 0);
       context.drawImage(
         this.backgroundImg2,
-        10, // 剪切的 x 坐标
-        200, // 剪切的 y 坐标
-        50, // 被剪切图像的宽度
-        50, // 被剪切图像的高度
-        100, // 在画布上放置图像的 x 坐标
-        100, // 在画布上放置图像的 y 坐标
-        150, // 要使用的图像的宽度。（伸展或缩小图像）
-        150 // 要使用的图像的高度。（伸展或缩小图像）
+        10,
+        200, 
+        50, 
+        50, 
+        100, 
+        100,
+        150,
+        150 
       );
 
       this.npc1.update();
