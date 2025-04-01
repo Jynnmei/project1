@@ -1,87 +1,129 @@
-canvas {
-  display: block;
-  position: absolute;
-  background-image: url("sky-background.jpg");
-  border: none;
-  top: 20%;
-  z-index: -1;
-}
-
-#message {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  position: relative;
-  top: 370px;
-  right: 45px;
-  font-size: 40px;
-}
-
-.btn {
-  margin-top: 10px;
-}
-
-#playBtn {
-  background: url("play-btn.png");
-  background-position: center;
-  background-size: cover;
-  border: none;
-  width: 150px; 
-  height: 70px;
-  clip-path: circle(58%);
-  margin-left: 1050px;
-}
-
-#exitBtn {
-  background: url("exit-btn.png");
-  background-position: center;
-  background-size: cover;
-  border: none;
-  width: 150px; 
-  height: 60px;
-  clip-path: circle(58%);
-  margin-left: 1050px;
-}
-
-#restartBtn {
-  background: url("restart-btn.png");
-  background-position: center;
-  background-size: cover;
-  border: none;
-  width: 150px; 
-  height: 60px;
-  clip-path: circle(65%);
-  margin-left: 1050px;
-  margin-top: 15px;
-}
-
-h1 {
-  text-align: center;
-  font-family: Agbalumo, sans-serif;
-  font-size: 70px;
-  margin: 0 auto;
-  color: rgb(107, 79, 234);
-}
-
-//===========================================================================================
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
   background: grey;
-  margin: 0;
-  padding: 0;
+  /* overflow: hidden; */
+  position: relative;
+  min-height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  font-size: 5vw;
+  margin: 0 auto;
+  padding-top: 2vh;
+  font-family: Agbalumo, sans-serif;
+  color: rgb(255, 255, 255);
+}
+
+h2#message {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 3vw;
+}
+
+#gameArea {
+  position: relative;
+  width: 50vw;
+  height: 60vh;
+  margin: 2vh auto 0;
+  outline: 1px solid white;
   overflow: hidden;
 }
 
-.game-container {
-  position: relative;
-  width: 352px;
-  height: 198px;
-  margin: 0 auto;
-  margin-top: 20px;
-  outline: 1px solid white;
-  transform: scale(2) translateY(50%);
+#background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("/image/sky-background.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
+#snowfield {
+  position: absolute;
+  width: 40%;
+  height: 50%;
+  background: url("/image/snow-field.jpg");
+  background-size: cover;
+  background-position: center;
+  left: 30%;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.player {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  bottom: 120px;
+}
+
+#player1,
+#playerComputer {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  bottom: 80px;
+  background-size: contain;
+  z-index: 10;
+  background-repeat: no-repeat;
+}
+
+#player1 {
+  left: 500px;
+  background: url("/character/player1.png");
+}
+
+#playerComputer {
+  right: 500px;
+  background: url("/character/computerPlayer.png");
+}
+
+.controls {
+  position: absolute;
+  right: 13%;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
+}
+
+.btn {
+  width: 10vw;
+  height: 7vh;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  clip-path: circle(58%);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.btn:hover {
+  transform: scale(1.1);
+}
+
+#playBtn {
+  background-image: url("/button/play-btn.png");
+}
+
+#exitBtn {
+  background-image: url("/button/exit-btn.png");
+}
+
+#restartBtn {
+  background-image: url("/button/restart-btn.png");
+}
