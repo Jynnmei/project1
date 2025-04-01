@@ -3,58 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <title>Snowball Roll Game</title>
+    <link rel="stylesheet" href="/newstyle.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Agbalumo&family=Anton&family=Fascinate+Inline&family=Lilita+One&display=swap"
       rel="stylesheet"
     />
-    <title>Snowball Roll Game</title>
   </head>
   <body>
-    <!-- <div class="background"></div> -->
-    <header>
-      <h1>Snowball Roll Game</h1>
-      <h2 id="message">Message</h2>
-    </header>
-
-    <main>
-      <canvas id="background" width="1000" height="600"></canvas>
-
-      <div class="snowField">
-        <div class="object"></div>
-        <!-- 这里是你的场景元素 -->
-      </div>
-
-      <section class="player">
-        <div class="plyr" id="0"></div>
-        <div class="plyr" id="1"></div>
-      </section>
-
-      <div class="controls">
-        <button id="playBtn" class="btn btn-primary" type="button"></button>
-        <button id="exitBtn" class="btn btn-primary" type="button"></button>
-        <button id="restartBtn" class="btn btn-primary" type="button"></button>
-      </div>
-    </main>
-    <script src="background.js"></script>
-    <script src="app.js"></script>
-  </body>
-</html>
-
-//==========================================================================================
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Snow</title>
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <div class="game-container">
-      <canvas class="game-canvas" width="352" height="198"></canvas>
+    <h1>Snowball Roll Game</h1>
+    <h2 id="message">Message</h2>
+    <div id="gameArea">
+      <div id="background" class="background"></div>
+      <div id="snowfield" class="snowfield"></div>
+      <!-- 这里是你的场景元素 -->
     </div>
 
-    <script src="/newscript.js"></script>
+    <section class="player">
+      <div id="player1" class="plyr"></div>
+      <div id="playerComputer" class="plyr"></div>
+    </section>
+
+    <div class="controls">
+      <button id="playBtn" class="btn btn-primary" type="button"></button>
+      <button id="exitBtn" class="btn btn-primary" type="button"></button>
+      <button id="restartBtn" class="btn btn-primary" type="button"></button>
+    </div>
+
+    <script src="/app.js"></script>
   </body>
 </html>
