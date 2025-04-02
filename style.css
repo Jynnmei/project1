@@ -6,7 +6,7 @@
 
 body {
   background: grey;
-  overflow: hidden;
+  /* overflow: hidden; */
   position: relative;
   min-height: 100vh;
 }
@@ -61,6 +61,49 @@ h2#message {
   align-items: flex-end;
 }
 
+#bridge1 {
+  position: absolute;
+  width: 8%;
+  height: 50%;
+  background: url("/image/bridge1.png");
+  background-size: cover;
+  background-position: center;
+  left: 34%;
+  bottom: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 5;
+}
+
+#bridge2 {
+  position: absolute;
+  width: 8%;
+  height: 50%;
+  background: url("/image/bridge2.png");
+  background-size: cover;
+  background-position: center;
+  right: 34%;
+  bottom: 50%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 5;
+}
+
+#snowball-1 {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background: url("/image/snowball.png");
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  left: 50%;
+  bottom: 5%;
+  z-index: 11;
+}
+
 .player {
   position: absolute;
   display: flex;
@@ -70,13 +113,13 @@ h2#message {
 }
 
 #player1,
-#playerComputer {
+#player2 {
   position: absolute;
   width: 60px;
   height: 60px;
   bottom: 80px;
   background-size: contain;
-  z-index: 10;
+  z-index: 12;
   background-repeat: no-repeat;
 }
 
@@ -85,7 +128,7 @@ h2#message {
   background: url("/character/player1.png");
 }
 
-#playerComputer {
+#player2 {
   right: 500px;
   background: url("/character/computerPlayer.png");
 }
@@ -118,10 +161,6 @@ h2#message {
 
 #playBtn {
   background-image: url("/button/play-btn.png");
-}
-
-#exitBtn {
-  background-image: url("/button/exit-btn.png");
 }
 
 #restartBtn {
