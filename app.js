@@ -19,6 +19,8 @@ let gameLoopId;
 let snowballAnimationId;
 let ply1HasBall = false;
 let ply2HasBall = false;
+let snowball1AnimationId = null; // 单独管理雪球1的动画
+let snowball2AnimationId = null; // 单独管理雪球2的动画
 
 document.addEventListener("keydown", handleKeys);
 playBtn.addEventListener("click", startGame);
@@ -41,7 +43,8 @@ function restartGame() {
   ply2HasBall = false;
 
   cancelAnimationFrame(gameLoopId);
-  cancelAnimationFrame(snowballAnimationId);
+  cancelAnimationFrame(snowball1AnimationId);
+  cancelAnimationFrame(snowball2AnimationId);
 
   // Reset positions of the players
   ply1LeftAdd = 500;
@@ -125,6 +128,46 @@ function moveComputerPlayer() {
   }
 }
 
+function attachSnowballToPlayer(ball, player, isPlayer1) {
+  // 先取消之前的动画（防止重复）
+  if (isPlayer1 && snowball1AnimationId) {
+    cancelAnimationFrame(snowball1AnimationId);
+  } else if (!isPlayer1 && snowball2AnimationId) {
+    cancelAnimationFrame(snowball2AnimationId);
+  }
+
+  const offsetX = 200; // 调整雪球相对于玩家的偏移量
+  const offsetY = 200;
+
+  function updateSnowballPosition() {
+    // 如果玩家不再持有球，则停止更新位置
+    if ((isPlayer1 && !ply1HasBall) || (!isPlayer1 && !ply2HasBall)) {
+      return;
+    }
+
+    const playerRect = player.getBoundingClientRect();
+    const gameRect = gameDiv.getBoundingClientRect();
+
+    // Calculate the snowball's position relative to the game container
+    const relativeLeft = playerRect.left - gameRect.left + offsetX;
+    const relativeTop = playerRect.top - gameRect.top + offsetY;
+
+    // Update snowball position
+    ball.style.left = relativeLeft + "px";
+    ball.style.top = relativeTop + "px";
+
+    // 保存动画ID（区分雪球1和雪球2）
+    if (isPlayer1) {
+      snowball1AnimationId = requestAnimationFrame(updateSnowballPosition);
+    } else {
+      snowball2AnimationId = requestAnimationFrame(updateSnowballPosition);
+    }
+  }
+
+  cancelAnimationFrame(snowballAnimationId); // Cancel previous animation to avoid interference
+  updateSnowballPosition(); // Start new animation
+}
+
 function checkCollisions() {
   const ply1 = ply1Div.getBoundingClientRect();
   const ply2 = ply2Div.getBoundingClientRect();
@@ -135,7 +178,7 @@ function checkCollisions() {
   if (!ply1HasBall && isColliding(ply1, ball1)) {
     console.log("玩家1拿到了雪球1");
     ply1HasBall = true;
-    attachSnowballToPlayer(snowball1, ply1Div, ply1HasBall);
+    attachSnowballToPlayer(snowball1, ply1Div, true); // true表示玩家1
     return true;
   }
 
@@ -143,7 +186,7 @@ function checkCollisions() {
   if (!ply2HasBall && isColliding(ply2, ball2)) {
     console.log("玩家2拿到了雪球2");
     ply2HasBall = true;
-    attachSnowballToPlayer(snowball2, ply2Div, ply2HasBall);
+    attachSnowballToPlayer(snowball2, ply2Div, false); // false表示玩家2
     return true;
   }
 
@@ -159,43 +202,12 @@ function isColliding(playerRect, ballRect) {
   );
 }
 
-function attachSnowballToPlayer(ball, player, hasBall) {
-  // Make snowball visible and attach to player
-  snowball1.style.display = "block";
-
-  // Position snowball relative to player (adjust offsets as needed)
-  const offsetX = 200; // Horizontal offset from player
-  const offsetY = 200; // Vertical offset from player
-
-  function updateSnowballPosition() {
-    // Get player's current position
-    const playerRect = player.getBoundingClientRect();
-    const gameRect = gameDiv.getBoundingClientRect();
-
-    // 计算雪球在游戏容器内的相对位置
-    const relativeLeft = playerRect.left - gameRect.left + offsetX;
-    const relativeTop = playerRect.top - gameRect.top + offsetY;
-
-    // 更新雪球位置
-    ball.style.left = relativeLeft + "px";
-    ball.style.top = relativeTop + "px";
-
-    // Keep updating position while player has ball
-    if (hasBall) {
-      snowballAnimationId = requestAnimationFrame(updateSnowballPosition);
-    }
-  }
-
-  cancelAnimationFrame(snowballAnimationId);
-  updateSnowballPosition();
-}
-
 function gameLoop() {
   moveComputerPlayer();
 
-  if (!ply1HasBall || !ply2HasBall) {
-    checkCollisions();
-  }
+  // if (!ply1HasBall || !ply2HasBall) {
+  checkCollisions();
+  // }
 
   gameLoopId = requestAnimationFrame(gameLoop);
 }
