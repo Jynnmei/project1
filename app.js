@@ -3,6 +3,22 @@ const ply1Div = document.getElementById("player1");
 const ply2Div = document.getElementById("player2");
 const startBtn = document.getElementById("playBtn");
 const restartBtn = document.getElementById("restartBtn");
+const snowball1 = document.getElementById("snowball-1");
+const snowball2 = document.getElementById("snowball-2");
+
+let ply1LeftAdd = 500;
+let ply1TopAdd = -140;
+
+let ply2LeftAdd = 700;
+let ply2TopAdd = -130;
+let ply2Direction = 1; // 1 for right, -1 for left
+let ply2VerticalDirection = -1; // 1 for down, -1 for up
+
+let gameStarted = false;
+let gameLoopId;
+let snowballAnimationId;
+let ply1HasBall = false;
+let ply2HasBall = false;
 
 document.addEventListener("keydown", handleKeys);
 playBtn.addEventListener("click", startGame);
@@ -12,6 +28,8 @@ function startGame() {
   gameStarted = true;
   playBtn.disabled = true;
   restartBtn.disabled = false;
+  ply1HasBall = false;
+  ply2HasBall = false;
   gameLoop();
 }
 
@@ -19,8 +37,11 @@ function restartGame() {
   gameStarted = false;
   playBtn.disabled = false;
   restartBtn.disabled = true;
+  ply1HasBall = false;
+  ply2HasBall = false;
 
   cancelAnimationFrame(gameLoopId);
+  cancelAnimationFrame(snowballAnimationId);
 
   // Reset positions of the players
   ply1LeftAdd = 500;
@@ -33,17 +54,14 @@ function restartGame() {
   ply1Div.style.top = ply1TopAdd + "px";
   ply2Div.style.left = ply2LeftAdd + "px";
   ply2Div.style.top = ply2TopAdd + "px";
+
+  // Reset snowball position
+  snowball1.style.position = "absolute";
+  snowball1.style.left = "300px";
+  snowball1.style.top = "300px";
+  snowball2.style.left = "250px";
+  snowball2.style.top = "300px";
 }
-
-// Player 1
-let ply1LeftAdd = 500;
-let ply1TopAdd = -140;
-
-// Computer Player 
-let ply2LeftAdd = 700;
-let ply2TopAdd = -130;
-let ply2Direction = 1; 
-let ply2VerticalDirection = -1; 
 
 function handleKeys(e) {
   if (!gameStarted) return;
@@ -85,26 +103,99 @@ function handleKeys(e) {
   }
 }
 
-// Game loop for computer player
-function gameLoop() {
-  moveComputerPlayer();
-  gameLoopId = requestAnimationFrame(gameLoop);
-}
-
 function moveComputerPlayer() {
+  // Horizontal movement
   ply2LeftAdd += ply2Direction * 1;
   ply2Div.style.left = ply2LeftAdd + "px";
 
+  // Change direction if at boundaries
   if (ply2LeftAdd >= 710) {
     ply2Direction = -1;
   } else if (ply2LeftAdd <= 500) {
     ply2Direction = 1;
   }
 
+  // Vertical movement (more random)
   ply2TopAdd += ply2VerticalDirection * 0.7;
   ply2Div.style.top = ply2TopAdd + "px";
 
+  // Change vertical direction randomly or at boundaries
   if (ply2TopAdd <= -200 || ply2TopAdd >= -60 || Math.random() < 0.01) {
     ply2VerticalDirection *= -1;
   }
+}
+
+function checkCollisions() {
+  const ply1 = ply1Div.getBoundingClientRect();
+  const ply2 = ply2Div.getBoundingClientRect();
+  const ball1 = snowball1.getBoundingClientRect();
+  const ball2 = snowball2.getBoundingClientRect();
+
+  // 玩家1只能拾取雪球1
+  if (!ply1HasBall && isColliding(ply1, ball1)) {
+    console.log("玩家1拿到了雪球1");
+    ply1HasBall = true;
+    attachSnowballToPlayer(snowball1, ply1Div, ply1HasBall);
+    return true;
+  }
+
+  // 玩家2只能拾取雪球2
+  if (!ply2HasBall && isColliding(ply2, ball2)) {
+    console.log("玩家2拿到了雪球2");
+    ply2HasBall = true;
+    attachSnowballToPlayer(snowball2, ply2Div, ply2HasBall);
+    return true;
+  }
+
+  return false;
+}
+
+function isColliding(playerRect, ballRect) {
+  return (
+    playerRect.left + playerRect.width >= ballRect.left &&
+    playerRect.left <= ballRect.left + ballRect.width &&
+    playerRect.top + playerRect.height >= ballRect.top &&
+    playerRect.top <= ballRect.top + ballRect.height
+  );
+}
+
+function attachSnowballToPlayer(ball, player, hasBall) {
+  // Make snowball visible and attach to player
+  snowball1.style.display = "block";
+
+  // Position snowball relative to player (adjust offsets as needed)
+  const offsetX = 200; // Horizontal offset from player
+  const offsetY = 200; // Vertical offset from player
+
+  function updateSnowballPosition() {
+    // Get player's current position
+    const playerRect = player.getBoundingClientRect();
+    const gameRect = gameDiv.getBoundingClientRect();
+
+    // 计算雪球在游戏容器内的相对位置
+    const relativeLeft = playerRect.left - gameRect.left + offsetX;
+    const relativeTop = playerRect.top - gameRect.top + offsetY;
+
+    // 更新雪球位置
+    ball.style.left = relativeLeft + "px";
+    ball.style.top = relativeTop + "px";
+
+    // Keep updating position while player has ball
+    if (hasBall) {
+      snowballAnimationId = requestAnimationFrame(updateSnowballPosition);
+    }
+  }
+
+  cancelAnimationFrame(snowballAnimationId);
+  updateSnowballPosition();
+}
+
+function gameLoop() {
+  moveComputerPlayer();
+
+  if (!ply1HasBall || !ply2HasBall) {
+    checkCollisions();
+  }
+
+  gameLoopId = requestAnimationFrame(gameLoop);
 }
