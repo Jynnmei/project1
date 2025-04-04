@@ -25,8 +25,25 @@ h2#message {
   bottom: 10vh;
   left: 50%;
   transform: translateX(-50%);
-  color: white;
+  color: rgb(223, 254, 131);
   font-size: 3vw;
+}
+
+#instructions {
+  position: absolute;
+  bottom: 26vh;
+  left: 85%;
+  transform: translateX(-40%);
+  color: white;
+  font-size: 1.3vw;
+  line-height: 1.6;
+  letter-spacing: 0.05vw;
+}
+
+#instructions h3 {
+  font-size: 1.9vw;
+  margin-bottom: 1.2vw;
+  text-transform: uppercase;
 }
 
 #sky-background {
@@ -46,7 +63,6 @@ h2#message {
   height: 60vh;
   margin: 2vh auto 0;
   outline: 1px solid white;
-  overflow: hidden;
 }
 
 #snowfield {
@@ -61,6 +77,7 @@ h2#message {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  overflow: visible;
 }
 
 #bridge1 {
@@ -91,8 +108,6 @@ h2#message {
   justify-content: space-between;
   align-items: flex-end;
   z-index: 5;
-  background: red;
-  opacity: 0.5;
 }
 
 #snowball-1 {
@@ -126,26 +141,27 @@ h2#message {
   position: absolute;
   width: 60px;
   height: 60px;
-  top: 240px;
+  top: 340px;
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 12;
 }
 
 #player1 {
-  left: 200px;
+  left: 500px;
   background: url("/character/player1.png");
+  transition: left 0.1s, top 0.1s;
 }
 
 #player2 {
-  left: 380px;
+  left: 700px;
   background: url("/character/computerPlayer.png");
   transition: left 0.1s, top 0.1s;
 }
 
 .controls {
   position: absolute;
-  right: 13%;
+  right: 76%;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
