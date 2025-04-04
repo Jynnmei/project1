@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snowball Game</title>
-    <link rel="stylesheet" href="/newstyle.css" />
+    <link rel="stylesheet" href="/style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Agbalumo&family=Anton&family=Fascinate+Inline&family=Lilita+One&display=swap"
       rel="stylesheet"
@@ -12,7 +12,22 @@
   </head>
   <body>
     <h1>Snowball Game</h1>
-    <h2 id="message">Message</h2>
+    <h2 id="message"></h2>
+    <div id="instructions">
+      <h3>How to Play</h3>
+      <ul>
+        <li><strong>Player (You)</strong>: Use arrow keys (↑↓←→) to move.</li>
+        <li>
+          <strong>Goal</strong>: Carry the snowball to Bridge 2(right side) to
+          win.
+        </li>
+        <li>
+          <strong>Computer Player</strong>: Automatically tries to reach Bridge
+          1.
+        </li>
+        <li><strong>Restart</strong>: Press button to reset the game.</li>
+      </ul>
+    </div>
     <div id="sky-background" class="background"></div>
     <div id="gameArea">
       <div id="snowfield" class="snowfield"></div>
@@ -20,9 +35,10 @@
       <div id="bridge2" class="bridge2"></div>
       <div id="snowball-1" class="snowball-1"></div>
       <div id="snowball-2" class="snowball-2"></div>
-      <div id="player1" class="plyr"></div>
-      <div id="player2" class="plyr"></div>
     </div>
+
+    <div id="player1" class="plyr"></div>
+    <div id="player2" class="plyr"></div>
 
     <div class="controls">
       <button id="playBtn" class="btn btn-primary" type="button"></button>
