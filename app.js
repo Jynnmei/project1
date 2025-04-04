@@ -6,21 +6,21 @@ const restartBtn = document.getElementById("restartBtn");
 const snowball1 = document.getElementById("snowball-1");
 const snowball2 = document.getElementById("snowball-2");
 
-let ply1LeftAdd = 500;
-let ply1TopAdd = -140;
+let ply1X = 200;
+let ply1Y = 240;
 
-let ply2LeftAdd = 700;
-let ply2TopAdd = -130;
-let ply2Direction = 1; // 1 for right, -1 for left
-let ply2VerticalDirection = -1; // 1 for down, -1 for up
+let ply2X = 380;
+let ply2Y = 240;
+let ply2DirectionX = 1; // 1 for right, -1 for left
+let ply2DirectionY = -1; // 1 for down, -1 for up
 
 let gameStarted = false;
 let gameLoopId;
 let snowballAnimationId;
 let ply1HasBall = false;
 let ply2HasBall = false;
-let snowball1AnimationId = null; // 单独管理雪球1的动画
-let snowball2AnimationId = null; // 单独管理雪球2的动画
+let snowball1AnimationId = null; 
+let snowball2AnimationId = null; 
 
 document.addEventListener("keydown", handleKeys);
 playBtn.addEventListener("click", startGame);
@@ -46,19 +46,16 @@ function restartGame() {
   cancelAnimationFrame(snowball1AnimationId);
   cancelAnimationFrame(snowball2AnimationId);
 
-  // Reset positions of the players
-  ply1LeftAdd = 500;
-  ply1TopAdd = -140;
-  ply2LeftAdd = 700;
-  ply2TopAdd = -130;
+  ply1X = 200;
+  ply1Y = 240;
+  ply2X = 380;
+  ply2Y = 240;
 
-  // Reset player styles to initial positions
-  ply1Div.style.left = ply1LeftAdd + "px";
-  ply1Div.style.top = ply1TopAdd + "px";
-  ply2Div.style.left = ply2LeftAdd + "px";
-  ply2Div.style.top = ply2TopAdd + "px";
+  ply1Div.style.left = ply1X + "px";
+  ply1Div.style.top = ply1Y + "px";
+  ply2Div.style.left = ply2X + "px";
+  ply2Div.style.top = ply2Y + "px";
 
-  // Reset snowball position
   snowball1.style.position = "absolute";
   snowball1.style.left = "300px";
   snowball1.style.top = "300px";
@@ -70,77 +67,76 @@ function handleKeys(e) {
   if (!gameStarted) return;
 
   let keyPress = e.code;
+
   if (keyPress === "ArrowRight") {
     console.log("right arrow pressed");
-    ply1LeftAdd += 2;
-    ply1Div.style.left = ply1LeftAdd + "px";
-    if (ply1LeftAdd >= 710) {
-      ply1LeftAdd -= 2;
+    ply1X += 2;
+    ply1Div.style.left = ply1X + "px";
+    if (ply1X >= 400) {
+      ply1X -= 2;
     }
   }
   if (keyPress === "ArrowLeft") {
     console.log("left arrow pressed");
-    ply1LeftAdd -= 2;
-    ply1Div.style.left = ply1LeftAdd + "px";
-    if (ply1LeftAdd <= 500) {
-      ply1LeftAdd += 2;
+    ply1X -= 2;
+    ply1Div.style.left = ply1X + "px";
+    if (ply1X <= 180) {
+      ply1X += 2;
     }
   }
 
   if (keyPress === "ArrowUp") {
     console.log("up arrow pressed");
-    ply1TopAdd -= 2;
-    ply1Div.style.top = ply1TopAdd + "px";
-    if (ply1TopAdd <= -200) {
-      ply1TopAdd += 2;
+    ply1Y -= 2;
+    ply1Div.style.top = ply1Y + "px";
+    if (ply1Y <= 160) {
+      ply1Y += 2;
     }
   }
 
   if (keyPress === "ArrowDown") {
     console.log("down arrow pressed");
-    ply1TopAdd += 2;
-    ply1Div.style.top = ply1TopAdd + "px";
-    if (ply1TopAdd >= -60) {
-      ply1TopAdd -= 2;
+    ply1Y += 2;
+    ply1Div.style.top = ply1Y + "px";
+    if (ply1Y >= 290) {
+      ply1Y -= 2;
     }
   }
 }
 
 function moveComputerPlayer() {
-  // Horizontal movement
-  ply2LeftAdd += ply2Direction * 1;
-  ply2Div.style.left = ply2LeftAdd + "px";
+  if (!gameStarted) return;
 
-  // Change direction if at boundaries
-  if (ply2LeftAdd >= 710) {
-    ply2Direction = -1;
-  } else if (ply2LeftAdd <= 500) {
-    ply2Direction = 1;
+  ply2X += ply2DirectionX * 1;
+  ply2Div.style.left = ply2X + "px";
+
+  if (ply2X >= 400) {
+    ply2DirectionX = -1; 
+  } else if (ply2X <= 180) {
+    ply2DirectionX = 1; 
   }
 
-  // Vertical movement (more random)
-  ply2TopAdd += ply2VerticalDirection * 0.7;
-  ply2Div.style.top = ply2TopAdd + "px";
+  ply2Y += ply2DirectionY * 0.7;
+  ply2Div.style.top = ply2Y + "px";
 
-  // Change vertical direction randomly or at boundaries
-  if (ply2TopAdd <= -200 || ply2TopAdd >= -60 || Math.random() < 0.01) {
-    ply2VerticalDirection *= -1;
+  if (ply2Y <= 160 || ply2Y >= 290 || Math.random() < 0.01) {
+    ply2DirectionY *= -1; 
   }
 }
 
+setInterval(moveComputerPlayer, 100);
+
 function attachSnowballToPlayer(ball, player, isPlayer1) {
-  // 先取消之前的动画（防止重复）
   if (isPlayer1 && snowball1AnimationId) {
     cancelAnimationFrame(snowball1AnimationId);
   } else if (!isPlayer1 && snowball2AnimationId) {
     cancelAnimationFrame(snowball2AnimationId);
   }
 
-  const offsetX = 200; // 调整雪球相对于玩家的偏移量
+  const offsetX = 200; 
   const offsetY = 200;
 
   function updateSnowballPosition() {
-    // 如果玩家不再持有球，则停止更新位置
     if ((isPlayer1 && !ply1HasBall) || (!isPlayer1 && !ply2HasBall)) {
       return;
     }
@@ -156,7 +152,6 @@ function attachSnowballToPlayer(ball, player, isPlayer1) {
     ball.style.left = relativeLeft + "px";
     ball.style.top = relativeTop + "px";
 
-    // 保存动画ID（区分雪球1和雪球2）
     if (isPlayer1) {
       snowball1AnimationId = requestAnimationFrame(updateSnowballPosition);
     } else {
@@ -164,8 +159,8 @@ function attachSnowballToPlayer(ball, player, isPlayer1) {
     }
   }
 
-  cancelAnimationFrame(snowballAnimationId); // Cancel previous animation to avoid interference
-  updateSnowballPosition(); // Start new animation
+  cancelAnimationFrame(snowballAnimationId); 
+  updateSnowballPosition();
 }
 
 function checkCollisions() {
@@ -174,26 +169,24 @@ function checkCollisions() {
   const ball1 = snowball1.getBoundingClientRect();
   const ball2 = snowball2.getBoundingClientRect();
 
-  // 玩家1只能拾取雪球1
-  if (!ply1HasBall && isColliding(ply1, ball1)) {
+  if (!ply1HasBall && checkOverlap(ply1, ball1)) {
     console.log("玩家1拿到了雪球1");
     ply1HasBall = true;
-    attachSnowballToPlayer(snowball1, ply1Div, true); // true表示玩家1
+    attachSnowballToPlayer(snowball1, ply1Div, true);
     return true;
   }
 
-  // 玩家2只能拾取雪球2
-  if (!ply2HasBall && isColliding(ply2, ball2)) {
+  if (!ply2HasBall && checkOverlap(ply2, ball2)) {
     console.log("玩家2拿到了雪球2");
     ply2HasBall = true;
-    attachSnowballToPlayer(snowball2, ply2Div, false); // false表示玩家2
+    attachSnowballToPlayer(snowball2, ply2Div, false);
     return true;
   }
 
   return false;
 }
 
-function isColliding(playerRect, ballRect) {
+function checkOverlap(playerRect, ballRect) {
   return (
     playerRect.left + playerRect.width >= ballRect.left &&
     playerRect.left <= ballRect.left + ballRect.width &&
