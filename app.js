@@ -1,206 +1,317 @@
-const gameDiv = document.getElementById("snowfield");
-const ply1Div = document.getElementById("player1");
-const ply2Div = document.getElementById("player2");
+const gameArea = document.getElementById("snowfield");
+const player1 = document.getElementById("player1");
+const player2 = document.getElementById("player2");
 const startBtn = document.getElementById("playBtn");
 const restartBtn = document.getElementById("restartBtn");
+const message = document.getElementById("message");
 const snowball1 = document.getElementById("snowball-1");
 const snowball2 = document.getElementById("snowball-2");
 
-let ply1X = 200;
-let ply1Y = 240;
+let snowball1AnimationId = null;
+let snowball2AnimationId = null;
 
-let ply2X = 380;
-let ply2Y = 240;
-let ply2DirectionX = 1; // 1 for right, -1 for left
-let ply2DirectionY = -1; // 1 for down, -1 for up
+const player1Start = { x: 500, y: 340 };
+const player2Start = { x: 700, y: 340 };
 
-let gameStarted = false;
-let gameLoopId;
-let snowballAnimationId;
-let ply1HasBall = false;
-let ply2HasBall = false;
-let snowball1AnimationId = null; 
-let snowball2AnimationId = null; 
+let gameState = {
+  started: false,
+  player1: {
+    x: player1Start.x, 
+    y: player1Start.y,
+    hasBall: false,
+  },
+  player2: {
+    x: player2Start.x, 
+    y: player2Start.y,
+    hasBall: false,
+    dirX: 1,
+    dirY: -1,
+  },
+  snowballs: [
+    { id: snowball1, x: 300, y: 300, heldBy: null },
+    { id: snowball2, x: 320, y: 300, heldBy: null },
+  ],
+};
 
-document.addEventListener("keydown", handleKeys);
-playBtn.addEventListener("click", startGame);
-restartBtn.addEventListener("click", restartGame);
+const boundaries = {
+  snowfield: { minX: 500, maxX: 710, minY: 270, maxY: 410 },
+  bridge1: { minX: 516, maxX: 538, minY: 96, maxY: 270 },
+  bridge2: { minX: 676, maxX: 692, minY: 96, maxY: 270 },
+};
+
+function initGame() {
+  gameState.player1 = {
+    x: player1Start.x, 
+    y: player1Start.y, 
+    hasBall: false,
+  };
+
+  gameState.player2 = {
+    x: player2Start.x, 
+    y: player2Start.y, 
+    hasBall: false, 
+    dirX: 1,
+    dirY: -1,
+  };
+
+  gameState.snowballs[0].heldBy = null;
+  gameState.snowballs[1].heldBy = null;
+
+  updatePlayerPosition(player1, gameState.player1);
+  updatePlayerPosition(player2, gameState.player2);
+  updateSnowballPosition(snowball1, gameState.snowballs[0]);
+  updateSnowballPosition(snowball2, gameState.snowballs[1]);
+
+  message.textContent = "";
+}
 
 function startGame() {
-  gameStarted = true;
+  if (gameState.started) return;
+
+  gameState.started = true;
   playBtn.disabled = true;
   restartBtn.disabled = false;
-  ply1HasBall = false;
-  ply2HasBall = false;
+
   gameLoop();
 }
 
 function restartGame() {
-  gameStarted = false;
+  gameState.started = false;
+
+  if (snowball1AnimationId) cancelAnimationFrame(snowball1AnimationId);
+  if (snowball2AnimationId) cancelAnimationFrame(snowball2AnimationId);
+  snowball1AnimationId = null;
+  snowball2AnimationId = null;
+
+  initGame();
+
   playBtn.disabled = false;
   restartBtn.disabled = true;
-  ply1HasBall = false;
-  ply2HasBall = false;
+}
 
-  cancelAnimationFrame(gameLoopId);
-  cancelAnimationFrame(snowball1AnimationId);
-  cancelAnimationFrame(snowball2AnimationId);
+function updatePlayerPosition(element, player) {
+  element.style.left = player.x + "px";
+  element.style.top = player.y + "px";
+}
 
-  ply1X = 200;
-  ply1Y = 240;
-  ply2X = 380;
-  ply2Y = 240;
-
-  ply1Div.style.left = ply1X + "px";
-  ply1Div.style.top = ply1Y + "px";
-  ply2Div.style.left = ply2X + "px";
-  ply2Div.style.top = ply2Y + "px";
-
-  snowball1.style.position = "absolute";
-  snowball1.style.left = "300px";
-  snowball1.style.top = "300px";
-  snowball2.style.left = "250px";
-  snowball2.style.top = "300px";
+function updateSnowballPosition(element, snowball) {
+  if (!snowball.heldBy) {
+    element.style.left = snowball.x + "px";
+    element.style.top = snowball.y + "px";
+  }
 }
 
 function handleKeys(e) {
-  if (!gameStarted) return;
+  if (!gameState.started) return;
 
-  let keyPress = e.code;
+  const key = e.code;
+  const player = gameState.player1;
+  const baseSpeed = 5;
+  let newX = player.x;
+  let newY = player.y;
 
-  if (keyPress === "ArrowRight") {
-    console.log("right arrow pressed");
-    ply1X += 2;
-    ply1Div.style.left = ply1X + "px";
-    if (ply1X >= 400) {
-      ply1X -= 2;
+  if (key === "ArrowRight") newX += baseSpeed;
+  if (key === "ArrowLeft") newX -= baseSpeed;
+  if (key === "ArrowUp") newY -= baseSpeed;
+  if (key === "ArrowDown") newY += baseSpeed;
+
+  if (canMoveTo(newX, newY, player.hasBall)) {
+    player.x = newX;
+    player.y = newY;
+    updatePlayerPosition(player1, player);
+
+    if (player.hasBall && isOnBridge2(player)) {
+      endGame("player1");
     }
   }
-  if (keyPress === "ArrowLeft") {
-    console.log("left arrow pressed");
-    ply1X -= 2;
-    ply1Div.style.left = ply1X + "px";
-    if (ply1X <= 180) {
-      ply1X += 2;
+}
+
+function canMoveTo(x, y, hasBall) {
+  if (
+    x >= boundaries.snowfield.minX &&
+    x <= boundaries.snowfield.maxX &&
+    y >= boundaries.snowfield.minY &&
+    y <= boundaries.snowfield.maxY
+  ) {
+    return true;
+  }
+
+  if (hasBall) {
+    if (
+      x >= boundaries.bridge2.minX &&
+      x <= boundaries.bridge2.maxX &&
+      y >= boundaries.bridge2.minY &&
+      y <= boundaries.bridge2.maxY
+    ) {
+      return true;
     }
   }
 
-  if (keyPress === "ArrowUp") {
-    console.log("up arrow pressed");
-    ply1Y -= 2;
-    ply1Div.style.top = ply1Y + "px";
-    if (ply1Y <= 160) {
-      ply1Y += 2;
-    }
-  }
+  return false;
+}
 
-  if (keyPress === "ArrowDown") {
-    console.log("down arrow pressed");
-    ply1Y += 2;
-    ply1Div.style.top = ply1Y + "px";
-    if (ply1Y >= 290) {
-      ply1Y -= 2;
-    }
-  }
+function isOnBridge2(player) {
+  return (
+    player.x >= boundaries.bridge2.minX &&
+    player.x <= boundaries.bridge2.maxX &&
+    player.y <= boundaries.bridge2.minY
+  );
 }
 
 function moveComputerPlayer() {
-  if (!gameStarted) return;
+  const computer = gameState.player2;
+  const baseSpeed = 1; 
+  const maxSpeed = 1.5; 
 
-  ply2X += ply2DirectionX * 1;
-  ply2Div.style.left = ply2X + "px";
+  if (!computer.hasBall) {
+    computer.x += clampSpeed(computer.dirX, maxSpeed);
+    computer.y += clampSpeed(computer.dirY, maxSpeed);
 
-  if (ply2X >= 400) {
-    ply2DirectionX = -1; 
-  } else if (ply2X <= 180) {
-    ply2DirectionX = 1; 
+    if (computer.x > boundaries.snowfield.maxX) computer.dirX = -baseSpeed;
+    if (computer.x < boundaries.snowfield.minX) computer.dirX = baseSpeed;
+    if (
+      computer.y > boundaries.snowfield.maxY ||
+      computer.y < boundaries.snowfield.minY
+    ) {
+      computer.dirY *= -1;
+    }
+
+    if (Math.random() < 0.01) {
+      computer.dirX += (Math.random() - 0.5) * 0.2;
+      computer.dirY += (Math.random() - 0.5) * 0.2;
+    }
+
+    computer.x = clamp(
+      computer.x,
+      boundaries.snowfield.minX,
+      boundaries.snowfield.maxX
+    );
+    computer.y = clamp(
+      computer.y,
+      boundaries.snowfield.minY,
+      boundaries.snowfield.maxY
+    );
+  } else {
+    computer.y -= baseSpeed;
+
+    if (computer.y <= boundaries.bridge1.maxY) {
+      computer.x = (boundaries.bridge1.minX + boundaries.bridge1.maxX) / 2;
+    }
+
+    if (computer.y <= boundaries.bridge1.minY) {
+      computer.y = boundaries.bridge1.minY;
+      endGame("player2");
+    }
   }
 
-  ply2Y += ply2DirectionY * 0.7;
-  ply2Div.style.top = ply2Y + "px";
-
-  if (ply2Y <= 160 || ply2Y >= 290 || Math.random() < 0.01) {
-    ply2DirectionY *= -1; 
-  }
+  updatePlayerPosition(player2, computer);
 }
 
-setInterval(moveComputerPlayer, 100);
+function clampSpeed(speed, max) {
+  return Math.min(Math.abs(speed), max) * Math.sign(speed);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function checkCollisions() {
+  if (!gameState.player1.hasBall && checkOverlap(player1, snowball1)) {
+    gameState.player1.hasBall = true;
+    gameState.snowballs[0].heldBy = "player1";
+    attachSnowballToPlayer(snowball1, player1, true);
+    return true;
+  }
+
+  if (!gameState.player2.hasBall && checkOverlap(player2, snowball2)) {
+    gameState.player2.hasBall = true;
+    gameState.snowballs[1].heldBy = "player2";
+    attachSnowballToPlayer(snowball2, player2, false);
+    return true;
+  }
+  return false;
+}
+
+function checkOverlap(element1, element2) {
+  const rect1 = element1.getBoundingClientRect();
+  const rect2 = element2.getBoundingClientRect();
+
+  return !(
+    rect1.right < rect2.left ||
+    rect1.left > rect2.right ||
+    rect1.bottom < rect2.top ||
+    rect1.top > rect2.bottom
+  );
+}
 
 function attachSnowballToPlayer(ball, player, isPlayer1) {
   if (isPlayer1 && snowball1AnimationId) {
     cancelAnimationFrame(snowball1AnimationId);
+    snowball1AnimationId = null; 
   } else if (!isPlayer1 && snowball2AnimationId) {
     cancelAnimationFrame(snowball2AnimationId);
+    snowball2AnimationId = null; 
   }
 
-  const offsetX = 200; 
+  const offsetX = 200;
   const offsetY = 200;
 
   function updateSnowballPosition() {
-    if ((isPlayer1 && !ply1HasBall) || (!isPlayer1 && !ply2HasBall)) {
+    if (
+      (isPlayer1 && !gameState.player1.hasBall) ||
+      (!isPlayer1 && !gameState.player2.hasBall)
+    ) {
       return;
     }
 
     const playerRect = player.getBoundingClientRect();
-    const gameRect = gameDiv.getBoundingClientRect();
+    const gameRect = gameArea.getBoundingClientRect();
 
-    // Calculate the snowball's position relative to the game container
-    const relativeLeft = playerRect.left - gameRect.left + offsetX;
-    const relativeTop = playerRect.top - gameRect.top + offsetY;
+    ball.style.left = playerRect.left - gameRect.left + offsetX + "px";
+    ball.style.top = playerRect.top - gameRect.top + offsetY + "px";
 
-    // Update snowball position
-    ball.style.left = relativeLeft + "px";
-    ball.style.top = relativeTop + "px";
-
-    if (isPlayer1) {
+      if (isPlayer1) {
       snowball1AnimationId = requestAnimationFrame(updateSnowballPosition);
     } else {
       snowball2AnimationId = requestAnimationFrame(updateSnowballPosition);
     }
   }
 
-  cancelAnimationFrame(snowballAnimationId); 
   updateSnowballPosition();
 }
 
-function checkCollisions() {
-  const ply1 = ply1Div.getBoundingClientRect();
-  const ply2 = ply2Div.getBoundingClientRect();
-  const ball1 = snowball1.getBoundingClientRect();
-  const ball2 = snowball2.getBoundingClientRect();
+function endGame(winner) {
+  gameState.started = false;
 
-  if (!ply1HasBall && checkOverlap(ply1, ball1)) {
-    console.log("玩家1拿到了雪球1");
-    ply1HasBall = true;
-    attachSnowballToPlayer(snowball1, ply1Div, true);
-    return true;
+  if (snowball1AnimationId) {
+    cancelAnimationFrame(snowball1AnimationId);
+    snowball1AnimationId = null;
+  }
+  if (snowball2AnimationId) {
+    cancelAnimationFrame(snowball2AnimationId);
+    snowball2AnimationId = null;
   }
 
-  if (!ply2HasBall && checkOverlap(ply2, ball2)) {
-    console.log("玩家2拿到了雪球2");
-    ply2HasBall = true;
-    attachSnowballToPlayer(snowball2, ply2Div, false);
-    return true;
+  if (winner === "player1") {
+    message.textContent = "Player's Win!";
+  } else {
+    message.textContent = "Computer Player's Win!";
   }
 
-  return false;
-}
-
-function checkOverlap(playerRect, ballRect) {
-  return (
-    playerRect.left + playerRect.width >= ballRect.left &&
-    playerRect.left <= ballRect.left + ballRect.width &&
-    playerRect.top + playerRect.height >= ballRect.top &&
-    playerRect.top <= ballRect.top + ballRect.height
-  );
+  resplaytartBtn.disabled = false;
+  playBtn.disabled = false;
 }
 
 function gameLoop() {
+  if (!gameState.started) return;
+
   moveComputerPlayer();
-
-  // if (!ply1HasBall || !ply2HasBall) {
   checkCollisions();
-  // }
-
-  gameLoopId = requestAnimationFrame(gameLoop);
+  requestAnimationFrame(gameLoop);
 }
+
+document.addEventListener("keydown", handleKeys);
+startBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", restartGame);
+
+initGame();
