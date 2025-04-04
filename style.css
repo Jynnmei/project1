@@ -6,7 +6,7 @@
 
 body {
   background: grey;
-  /* overflow: hidden; */
+  overflow: hidden;
   position: relative;
   min-height: 100vh;
 }
@@ -29,6 +29,17 @@ h2#message {
   font-size: 3vw;
 }
 
+#sky-background {
+  position: fixed;
+  width: 50vw;
+  height: 60vh;
+  background: url("/image/sky-background.jpg");
+  background-size: cover;
+  background-position: center;
+  left: 25%;
+  top: 20%;
+}
+
 #gameArea {
   position: relative;
   width: 50vw;
@@ -36,15 +47,6 @@ h2#message {
   margin: 2vh auto 0;
   outline: 1px solid white;
   overflow: hidden;
-}
-
-#background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: url("/image/sky-background.jpg");
-  background-size: cover;
-  background-position: center;
 }
 
 #snowfield {
@@ -89,6 +91,8 @@ h2#message {
   justify-content: space-between;
   align-items: flex-end;
   z-index: 5;
+  background: red;
+  opacity: 0.5;
 }
 
 #snowball-1 {
@@ -117,33 +121,26 @@ h2#message {
   z-index: 14;
 }
 
-.player {
-  position: absolute;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  bottom: 120px;
-}
-
 #player1,
 #player2 {
   position: absolute;
   width: 60px;
   height: 60px;
-  bottom: 80px;
+  top: 240px;
   background-size: contain;
-  z-index: 12;
   background-repeat: no-repeat;
+  z-index: 12;
 }
 
 #player1 {
-  left: 500px;
+  left: 200px;
   background: url("/character/player1.png");
 }
 
 #player2 {
-  right: 500px;
+  left: 380px;
   background: url("/character/computerPlayer.png");
+  transition: left 0.1s, top 0.1s;
 }
 
 .controls {
