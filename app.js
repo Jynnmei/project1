@@ -35,8 +35,8 @@ let gameState = {
 
 const boundaries = {
   snowfield: { minX: 500, maxX: 710, minY: 270, maxY: 410 },
-  bridge1: { minX: 516, maxX: 538, minY: 96, maxY: 270 },
-  bridge2: { minX: 676, maxX: 692, minY: 96, maxY: 270 },
+  bridge1: { minX: 516, maxX: 538, minY: 100, maxY: 270 },
+  bridge2: { minX: 676, maxX: 692, minY: 100, maxY: 270 },
 };
 
 function initGame() {
@@ -51,7 +51,7 @@ function initGame() {
     y: player2Start.y, 
     hasBall: false, 
     dirX: 1,
-    dirY: -1,
+    dirY: -1, 
   };
 
   gameState.snowballs[0].heldBy = null;
@@ -87,6 +87,8 @@ function restartGame() {
 
   playBtn.disabled = false;
   restartBtn.disabled = true;
+
+  message.textContent = "Ready to Play"; 
 }
 
 function updatePlayerPosition(element, player) {
@@ -107,10 +109,11 @@ function handleKeys(e) {
   const key = e.code;
   const player = gameState.player1;
   const baseSpeed = 5;
+  
   let newX = player.x;
   let newY = player.y;
 
-  if (key === "ArrowRight") newX += baseSpeed;
+   if (key === "ArrowRight") newX += baseSpeed;
   if (key === "ArrowLeft") newX -= baseSpeed;
   if (key === "ArrowUp") newY -= baseSpeed;
   if (key === "ArrowDown") newY += baseSpeed;
@@ -119,6 +122,9 @@ function handleKeys(e) {
     player.x = newX;
     player.y = newY;
     updatePlayerPosition(player1, player);
+
+    console.log("player.y:", player.y);
+    console.log("player.x:", player.x);
 
     if (player.hasBall && isOnBridge2(player)) {
       endGame("player1");
@@ -181,7 +187,7 @@ function moveComputerPlayer() {
       computer.dirY += (Math.random() - 0.5) * 0.2;
     }
 
-    computer.x = clamp(
+      computer.x = clamp(
       computer.x,
       boundaries.snowfield.minX,
       boundaries.snowfield.maxX
@@ -270,7 +276,7 @@ function attachSnowballToPlayer(ball, player, isPlayer1) {
     ball.style.left = playerRect.left - gameRect.left + offsetX + "px";
     ball.style.top = playerRect.top - gameRect.top + offsetY + "px";
 
-      if (isPlayer1) {
+    if (isPlayer1) {
       snowball1AnimationId = requestAnimationFrame(updateSnowballPosition);
     } else {
       snowball2AnimationId = requestAnimationFrame(updateSnowballPosition);
@@ -294,19 +300,26 @@ function endGame(winner) {
 
   if (winner === "player1") {
     message.textContent = "Player's Win!";
-  } else {
+  } else if (winner === "player2") {
     message.textContent = "Computer Player's Win!";
   }
 
-  resplaytartBtn.disabled = false;
-  playBtn.disabled = false;
+  restartBtn.disabled = false;
+  playBtn.disabled = true;
 }
 
 function gameLoop() {
   if (!gameState.started) return;
 
   moveComputerPlayer();
+
   checkCollisions();
+
+  if (gameState.player1.hasBall && isOnBridge2(gameState.player1)) {
+    endGame("player1");
+    return; 
+  }
+
   requestAnimationFrame(gameLoop);
 }
 
