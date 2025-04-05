@@ -6,6 +6,8 @@ const restartBtn = document.getElementById("restartBtn");
 const message = document.getElementById("message");
 const snowball1 = document.getElementById("snowball-1");
 const snowball2 = document.getElementById("snowball-2");
+const bgMusic = document.getElementById("bgMusic");
+const winSound = document.getElementById("winSound");
 
 let snowball1AnimationId = null;
 let snowball2AnimationId = null;
@@ -21,7 +23,7 @@ let gameState = {
     hasBall: false,
   },
   player2: {
-    x: player2Start.x, 
+    x: player2Start.x,
     y: player2Start.y,
     hasBall: false,
     dirX: 1,
@@ -41,17 +43,17 @@ const boundaries = {
 
 function initGame() {
   gameState.player1 = {
-    x: player1Start.x, 
-    y: player1Start.y, 
+    x: player1Start.x,
+    y: player1Start.y,
     hasBall: false,
   };
 
   gameState.player2 = {
-    x: player2Start.x, 
-    y: player2Start.y, 
-    hasBall: false, 
+    x: player2Start.x,
+    y: player2Start.y,
+    hasBall: false,
     dirX: 1,
-    dirY: -1, 
+    dirY: -1,
   };
 
   gameState.snowballs[0].heldBy = null;
@@ -72,6 +74,10 @@ function startGame() {
   playBtn.disabled = true;
   restartBtn.disabled = false;
 
+  bgMusic.volume = 0.5;
+  bgMusic.currentTime = 0;
+  bgMusic.play();
+
   gameLoop();
 }
 
@@ -88,7 +94,7 @@ function restartGame() {
   playBtn.disabled = false;
   restartBtn.disabled = true;
 
-  message.textContent = "Ready to Play"; 
+  message.textContent = "Ready to Play";
 }
 
 function updatePlayerPosition(element, player) {
@@ -109,11 +115,10 @@ function handleKeys(e) {
   const key = e.code;
   const player = gameState.player1;
   const baseSpeed = 5;
-  
   let newX = player.x;
   let newY = player.y;
 
-   if (key === "ArrowRight") newX += baseSpeed;
+  if (key === "ArrowRight") newX += baseSpeed;
   if (key === "ArrowLeft") newX -= baseSpeed;
   if (key === "ArrowUp") newY -= baseSpeed;
   if (key === "ArrowDown") newY += baseSpeed;
@@ -166,7 +171,7 @@ function isOnBridge2(player) {
 
 function moveComputerPlayer() {
   const computer = gameState.player2;
-  const baseSpeed = 1; 
+  const baseSpeed = 1;
   const maxSpeed = 1.5; 
 
   if (!computer.hasBall) {
@@ -187,7 +192,7 @@ function moveComputerPlayer() {
       computer.dirY += (Math.random() - 0.5) * 0.2;
     }
 
-      computer.x = clamp(
+    computer.x = clamp(
       computer.x,
       boundaries.snowfield.minX,
       boundaries.snowfield.maxX
@@ -298,6 +303,12 @@ function endGame(winner) {
     snowball2AnimationId = null;
   }
 
+  bgMusic.pause();
+  bgMusic.currentTime = 0;
+
+  winSound.volume = 1.0;
+  winSound.play();
+
   if (winner === "player1") {
     message.textContent = "Player's Win!";
   } else if (winner === "player2") {
@@ -310,9 +321,7 @@ function endGame(winner) {
 
 function gameLoop() {
   if (!gameState.started) return;
-
   moveComputerPlayer();
-
   checkCollisions();
 
   if (gameState.player1.hasBall && isOnBridge2(gameState.player1)) {
