@@ -218,12 +218,28 @@ function moveComputerPlayer() {
   updatePlayerPosition(player2, computer);
 }
 
-function clampSpeed(speed, max) {
-  return Math.min(Math.abs(speed), max) * Math.sign(speed);
+function clampSpeed(speed, maxSpeed) {
+  let speedAmount = Math.abs(speed);
+
+  if (speedAmount > maxSpeed) {
+    speedAmount = maxSpeed;
+  }
+
+  if (speed < 0) {
+    return -speedAmount; 
+  } else {
+    return speedAmount;
+  }
 }
 
 function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
+  if (value < min) {
+    return min;
+  } else if (value > max) {
+    return max;
+  } else {
+    return value;
+  }
 }
 
 function checkCollisions() {
