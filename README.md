@@ -50,7 +50,7 @@ Touch a snowball to pick it up (automatic)
 
 - With a snowball: Can access your assigned bridge
 
-## **_Key Functions and Features:_**
+## **_Key Functions and Features_**
 
 ### 1 - Game Initialization and Reset:
 
