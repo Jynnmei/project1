@@ -2,6 +2,10 @@
 
 A game where players race to collect snowballs and reach the bridge first!
 
+![Game Screenshot](./README/Image-1.png)
+![Game Screenshot](./README/Image-2.png)
+![Game Screenshot](./README/Image-3.png)
+
 ## **_Game Concept_**
 
 - Player 1 (human) vs Player 2 (computer-controlled)
