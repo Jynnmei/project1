@@ -1,0 +1,25 @@
+user stories
+--------------------------------
+As a player, I want to move with arrow keys to navigate the snowfield.
+As a player, I want to pick up snowballs by touching them.
+As a player, I want to see the snowball follow me when I carry it.
+As a player, I want to win by reaching Bridge 2 with a snowball.
+As a player, I want the computer to move automatically and compete for snowballs.
+As a player, I want the computer to try reaching Bridge 1 to win.
+As a player, I want a clear win/lose message at the end.
+
+pseudocodes
+-----------
+1. Define variables to keep track of the game:
+    - players: [player1, computer player]
+    - snowballs: [snowball1, snowball2]
+    - bridges: [bridge1, bridge2]
+    - results
+    - instructions
+    - gameOver
+2. Player Controls
+    - Function handleKeys
+3. Computer player controls (random)
+4. Button controls  
+    - play button click
+    - restart button click
