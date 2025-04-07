@@ -150,3 +150,23 @@ gameLoop()
 - [Chinese: 掘金 Game Development](https://juejin.cn/post/7025961194506846244)
 - [Chinese: CSDN JavaScript Tutorial](https://blog.csdn.net/m0_70793959/article/details/131584880)
 - [Character Animation Tutorial](https://www.youtube.com/watch?v=_MyPLZSGS3s)
+
+## **_Planned future enhancements_**
+
+### 1) Dynamic Snowball Respawn
+
+- After each restart, the snowball will appear at a random position on the map to increase replayability.
+
+### 2) Dynamic Character Facing Direction
+
+- Characters will now turn to face left or right based on their movement direction, instead of always facing the player.
+
+### 4) Multiplayer Expansion
+
+- The game will support up to 3 players.
+- Players can collide with each other; collisions may cause a player to drop their snowball, adding a competitive element.
+
+### 5) Level Progression System
+
+- A level system will be introduced.
+- Players must complete at least two distinct levels to win the game.
